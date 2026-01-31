@@ -2,12 +2,12 @@ import java.util.Scanner;
 
 public class NumberUtilityApp {
 
-    // Method 1: Even / Odd
+    
     static boolean isEven(int n) {
         return n % 2 == 0;
     }
 
-    // Method 2: Prime Check
+    
     static boolean isPrime(int n) {
         if (n <= 1) return false;
 
@@ -19,7 +19,7 @@ public class NumberUtilityApp {
         return true;
     }
 
-    // Method 3: Reverse Number
+    
     static int reverseNumber(int n) {
         int rev = 0;
 
@@ -32,7 +32,7 @@ public class NumberUtilityApp {
         return rev;
     }
 
-    // Method 4: Palindrome Check
+    
     static boolean isPalindrome(int n) {
         int original = n;
         int rev = reverseNumber(n);
@@ -40,7 +40,7 @@ public class NumberUtilityApp {
         return original == rev;
     }
 
-    // Method 5: Sum of Digits
+    
     static int sumOfDigits(int n) {
         int sum = 0;
 
@@ -52,7 +52,7 @@ public class NumberUtilityApp {
         return sum;
     }
 
-    // Method 6: Factorial
+    
     static int factorial(int n) {
         int fact = 1;
 
@@ -85,7 +85,7 @@ public class NumberUtilityApp {
 
             // Exit
             if (choice == 7) {
-                System.out.println("Thank you! Bye 👋");
+                System.out.println("Thank you! Bye ");
                 break;
             }
 
@@ -131,7 +131,7 @@ public class NumberUtilityApp {
                     System.out.println("Invalid Choice!");
             }
 
-            System.out.println(); // space line
+            System.out.println(); 
         }
 
         sc.close();
