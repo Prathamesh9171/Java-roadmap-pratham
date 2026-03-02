@@ -1,0 +1,76 @@
+package com.pratham.studentapi.controller;
+
+import com.pratham.studentapi.dto.StudentDTO;
+import com.pratham.studentapi.model.Student;
+import com.pratham.studentapi.response.ApiResponse;
+import com.pratham.studentapi.service.StudentService;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/students")
+public class StudentController {
+
+    @Autowired
+    private StudentService studentService;
+
+    @GetMapping
+    public Page<Student> getAllStudents(
+            @ParameterObject Pageable pageable) {
+        return studentService.getStudents(pageable);
+    }
+
+    // GET student by roll
+    @GetMapping("/{roll}")
+    public ResponseEntity<Student> getStudent(@PathVariable int roll) {
+        return ResponseEntity.ok(studentService.getStudentByRoll(roll));
+    }
+
+    // POST add student (Using DTO - Clean Architecture)
+    @PostMapping
+    public ResponseEntity<ApiResponse> addStudent(@RequestBody StudentDTO dto) {
+
+        Student student = new Student(
+                dto.getRoll(),
+                dto.getName(),
+                dto.getMarks()
+        );
+
+        studentService.addStudent(student);
+
+        return ResponseEntity.ok(
+                new ApiResponse("Student saved successfully", 200)
+        );
+    }
+
+    // PUT update student
+    @PutMapping("/{roll}")
+    public ResponseEntity<Student> updateStudent(
+            @PathVariable int roll,
+            @RequestBody Student student) {
+
+        Student updated = studentService.updateStudent(roll, student);
+        return ResponseEntity.ok(updated);
+    }
+
+    @GetMapping("/search")
+    public List<Student> searchByName(@RequestParam String name) {
+        return studentService.searchByName(name);
+    }
+
+    @GetMapping("/top")
+    public List<Student> topStudents(@RequestParam double marks) {
+        return studentService.findTopStudents(marks);
+    }
+
+    @GetMapping("/search/partial")
+    public List<Student> partialSearch(@RequestParam String name) {
+        return studentService.searchByPartialName(name);
+    }
+}
