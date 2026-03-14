@@ -26,6 +26,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+        String path = request.getRequestURI();
+
+        // Skip JWT filter for public endpoints
+        if (path.startsWith("/auth")
+                || path.startsWith("/swagger-ui")
+                || path.startsWith("/v3/api-docs")
+                || path.startsWith("/actuator")) {
+
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -36,7 +48,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
         String username = jwtService.extractUsername(token);
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (username != null &&
+                SecurityContextHolder.getContext().getAuthentication() == null) {
 
             UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(
