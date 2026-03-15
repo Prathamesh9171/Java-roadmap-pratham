@@ -17,26 +17,36 @@ import java.util.Collections;
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
+    private static final String[] PUBLIC_PATH_PREFIXES = {
+            "/auth",
+            "/swagger-ui",
+            "/v3/api-docs",
+            "/actuator",
+            "/health",
+            "/error"
+    };
+
     @Autowired
     private JwtService jwtService;
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+
+        for (String publicPathPrefix : PUBLIC_PATH_PREFIXES) {
+            if (path.startsWith(publicPathPrefix)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
-
-        String path = request.getRequestURI();
-
-        // Skip JWT filter for public endpoints
-        if (path.startsWith("/auth")
-                || path.startsWith("/swagger-ui")
-                || path.startsWith("/v3/api-docs")
-                || path.startsWith("/actuator")) {
-
-            filterChain.doFilter(request, response);
-            return;
-        }
 
         String authHeader = request.getHeader("Authorization");
 

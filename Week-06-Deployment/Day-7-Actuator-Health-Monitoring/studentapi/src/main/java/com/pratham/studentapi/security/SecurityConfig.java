@@ -3,6 +3,7 @@ package com.pratham.studentapi.security;
 import com.pratham.studentapi.security.jwt.JwtAuthFilter;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -36,12 +37,17 @@ public class SecurityConfig {
                         )
                 )
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll()
                         .requestMatchers(
                                 "/auth/**",
+                                "/health",
+                                "/health/**",
+                                "/actuator/health",
+                                "/actuator/health/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui.html",
-                                "/actuator/**"
+                                "/error"
                         ).permitAll()
                         .anyRequest().authenticated()
                 );
