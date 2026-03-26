@@ -68,3 +68,10 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+## Week 4 - Spring Boot Backend
+
+- Created REST API using Spring Boot
+- Implemented layered architecture (Controller, Service, Repository)
+- Integrated MySQL using Spring Data JPA
+- Tested endpoints using Postman

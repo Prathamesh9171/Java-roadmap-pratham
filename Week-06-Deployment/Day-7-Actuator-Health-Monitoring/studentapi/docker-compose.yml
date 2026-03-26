@@ -1,0 +1,27 @@
+services:
+
+  mysql:
+    image: mysql:8
+    container_name: student-mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: studentdb
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  studentapi:
+    build: .
+    container_name: student-api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/studentdb
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root123
+
+volumes:
+  mysql-data:
