@@ -1,30 +1,63 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   getStudents,
+  addStudent,
   deleteStudent,
   searchStudents,
 } from "./api/studentApi";
 
 function App() {
   const [students, setStudents] = useState([]);
+
+  const [form, setForm] = useState({
+    roll: "",
+    name: "",
+    marks: "",
+  });
+
   const [search, setSearch] = useState("");
+
+  // Fetch all students
+  const fetchStudents = () => {
+    getStudents()
+      .then((res) => setStudents(res.data.content))
+      .catch((err) => console.error(err));
+  };
 
   useEffect(() => {
     fetchStudents();
   }, []);
 
-  const fetchStudents = async () => {
-    try {
-      const response = await getStudents();
-      setStudents(response.data);
-    } catch (error) {
-      console.error("Error fetching students:", error);
-    }
+  // Handle form change
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
   };
 
-  // 🔍 Search handler
+  // Submit form
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    addStudent(form)
+      .then(() => {
+        fetchStudents();
+        setForm({ roll: "", name: "", marks: "" });
+      })
+      .catch((err) => console.error(err));
+  };
+
+  // Delete student
+  const handleDelete = (roll) => {
+    deleteStudent(roll)
+      .then(() => fetchStudents())
+      .catch((err) => console.error(err));
+  };
+
+  // Search students
   const handleSearch = () => {
-    if (search.trim() === "") {
+    if (search === "") {
       fetchStudents();
       return;
     }
@@ -34,54 +67,68 @@ function App() {
       .catch((err) => console.error(err));
   };
 
-  // ❌ Delete handler
-  const handleDelete = (roll) => {
-    deleteStudent(roll)
-      .then(() => fetchStudents())
-      .catch((err) => console.error(err));
-  };
-
   return (
     <div style={{ padding: "20px" }}>
-      <h2>Student List</h2>
+      <h1>Student Management System</h1>
 
-      {/* 🔍 Search UI */}
+      {/* ADD FORM */}
+      <form onSubmit={handleSubmit}>
+        <input
+          type="number"
+          name="roll"
+          placeholder="Roll"
+          value={form.roll}
+          onChange={handleChange}
+        />
+
+        <input
+          type="text"
+          name="name"
+          placeholder="Name"
+          value={form.name}
+          onChange={handleChange}
+        />
+
+        <input
+          type="number"
+          name="marks"
+          placeholder="Marks"
+          value={form.marks}
+          onChange={handleChange}
+        />
+
+        <button type="submit">Add Student</button>
+      </form>
+
+      <br />
+
+      {/* SEARCH */}
       <input
         type="text"
         placeholder="Search by name"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
+
       <button onClick={handleSearch}>Search</button>
 
-      {students.length === 0 ? (
-        <p>No students found</p>
-      ) : (
-        <table border="1" cellPadding="10">
-          <thead>
-            <tr>
-              <th>Roll</th>
-              <th>Name</th>
-              <th>Marks</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {students.map((student) => (
-              <tr key={student.roll}>
-                <td>{student.roll}</td>
-                <td>{student.name}</td>
-                <td>{student.marks}</td>
-                <td>
-                  <button onClick={() => handleDelete(student.roll)}>
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      <br /><br />
+
+      {/* LIST */}
+      <ul>
+        {students.map((s) => (
+          <li key={s.roll}>
+            {s.name} - {s.marks}
+
+            <button
+              style={{ marginLeft: "10px" }}
+              onClick={() => handleDelete(s.roll)}
+            >
+              Delete
+            </button>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
